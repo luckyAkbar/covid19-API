@@ -1,17 +1,22 @@
 const assert = require('assert').strict;
 const axios = require('axios').default;
+const dayjs = require('dayjs');
 
 class CovidAPI {
   constructor() {
     this.status = 200;
     this.ok = true;
+    this.defaultCovidYearDetected = 2020;
+    this.currentTime = new Date();
+    this.currentYear = this.currentTime.getFullYear();
     this.message = 'Request success!';
+    this.targetYear = null;
   }
 
   async getGeneralUpdate() {
     try {
       const response = await axios.get('https://data.covid19.go.id/public/api/update.json');
-      assert.notStrictEqual((response.status !== 200), true);
+      assert.strictEqual(response.status, 200);
 
       const { data } = response;
 
