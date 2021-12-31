@@ -5,7 +5,7 @@ const JSONFormatError = require('./middleware/jsonFormatErr');
 
 const app = express();
 
-app.use(express.json({ type: 'application/json'}), JSONFormatError);
+app.use(express.json({ type: 'application/json' }), JSONFormatError);
 app.use(express.urlencoded({ extended: false }));
 app.use('/', logger);
 app.use('/', routes);
