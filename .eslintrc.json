@@ -12,6 +12,8 @@
         "ecmaVersion": 13
     },
     "rules": {
-        "no-unused-vars": "off"
+        "no-unused-vars": "off",
+        "no-underscore-dangle": "off",
+        "no-plusplus": "off"
     }
 }
