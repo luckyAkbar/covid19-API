@@ -3,4 +3,4 @@
 ## I want to sai Hi to everyone reading this file, especially for Nodeflux's interenship selection teams!
 
 ### Technologies
-- This API was build with Javascript on NodeJS environtment with ExpressJS framework
+- This API was build with Javascript on NodeJS environment with ExpressJS framework
