@@ -1,0 +1,24 @@
+{
+  "name": "nodeflux-covid-statistic-api",
+  "version": "1.0.0",
+  "description": "made to fulfill recruitment process in Nodeflux x Kampus Merdeka Interenship",
+  "main": "index.js",
+  "scripts": {
+    "linter": "npx eslint .",
+    "server": "node index.js",
+    "dev-server": "nodemon index.js"
+  },
+  "author": "Lucky Akbar",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.24.0",
+    "express": "^4.17.2",
+    "morgan": "^1.10.0"
+  },
+  "devDependencies": {
+    "eslint": "^8.5.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-import": "^2.25.3",
+    "nodemon": "^2.0.15"
+  }
+}

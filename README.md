@@ -1,0 +1,6 @@
+# Covid19 API @Nodeflux X Kampus Merdeka
+
+## I want to sai Hi to everyone reading this file, especially for Nodeflux's interenship selection teams!
+
+### Technologies
+- This API was build with Javascript on NodeJS environtment with ExpressJS framework
