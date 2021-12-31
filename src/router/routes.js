@@ -1,15 +1,14 @@
 const express = require('express');
 const updateHandler = require('../handler/update');
+const yearlyHandler = require('../handler/yearly');
 
 const router = express.Router();
 
 router.route('/')
   .get(updateHandler);
 
-router.route('/yearly')
-  .get((req, res) => {
-    res.status(200).json({ message: 'yearly' });
-  });
+router.route('/yearly/:year')
+  .get(yearlyHandler);
 
 router.route('*')
   .all((req, res) => {
