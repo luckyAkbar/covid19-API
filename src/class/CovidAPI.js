@@ -1,6 +1,5 @@
 const assert = require('assert').strict;
 const axios = require('axios').default;
-const dayjs = require('dayjs');
 
 class CovidAPI {
   constructor() {
