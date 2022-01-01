@@ -73,6 +73,36 @@ class CovidAPI {
     }
   }
 
+  async getRangedYearlyData({ since = 2020, upto = this.currentYear}) {
+    try {
+      const response = await axios.get('https://data.covid19.go.id/public/api/update.json');
+      assert.strictEqual(response.status, 200);
+
+      const { data } = response;
+
+      const rangedYearlyData = this._extractRangedYearlyData(data, since, upto);
+      return rangedYearlyData;
+    } catch (e) {
+      this.ok = false;
+      this.message = 'We failed to fulfill your request 3rd party service returning error status';
+
+      throw e;
+    }
+  }
+
+  _extractRangedYearlyData(fetchResult, since, upto) {
+    const yearInBetween = this._generateYearInBetween(since, upto);
+    const extractedRangedYearlyData = [];
+
+    for (let i = 0; i < yearInBetween.length; i++) {
+      const yearlyData = this._extractYearlyData(fetchResult, yearInBetween[i]);
+
+      extractedRangedYearlyData.push(yearlyData);
+    }
+
+    return extractedRangedYearlyData;
+  }
+
   _extractYearlyData(fetchResult, year) {
     this.targetYear = this._validateTargetYear(year);
     const data = fetchResult.update.harian;
@@ -83,6 +113,18 @@ class CovidAPI {
         return data[i];
       }
     }
+  }
+
+  _generateYearInBetween(since, upto) {
+    const targetYearSince = Number(this._validateTargetYear(since));
+    const targetYearUpto = Number(this._validateTargetYear(upto));
+    const yearInBetween = [];
+
+    for (let i = targetYearSince; i <= targetYearUpto; i++) {
+      yearInBetween.push(i);
+    }
+
+    return yearInBetween;
   }
 
   _validateTargetYear(year) {
