@@ -109,7 +109,13 @@ class CovidAPI {
 
     for (let i = 0; i < data.length; i++) {
       if (data[i].key_as_string === endOfYear) {
-        return data[i];
+        return {
+          year,
+          positive: data[i].jumlah_positif_kum.value,
+          recovered: data[i].jumlah_sembuh_kum.value,
+          deaths: data[i].jumlah_meninggal_kum.value,
+          active: data[i].jumlah_dirawat_kum.value,
+        };
       }
     }
 
