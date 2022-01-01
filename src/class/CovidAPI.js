@@ -9,6 +9,8 @@ class CovidAPI {
     this.defaultCovidYearDetected = 2020;
     this.currentTime = new Date();
     this.currentYear = this.currentTime.getFullYear();
+    this.currentMonth = this.currentTime.getMonth();
+    this.currentDate = this.currentTime.getDate();
     this.message = 'Request success!';
     this.targetYear = null;
   }
@@ -62,6 +64,7 @@ class CovidAPI {
         active: yearlyData.jumlah_dirawat_kum.value,
       };
     } catch (e) {
+      console.log(e);
       this.message = `Yearly Covid19 Case in Indonesia for year ${year} is not found`;
       this.ok = false;
       this.status = 404;
@@ -73,15 +76,13 @@ class CovidAPI {
   _extractYearlyData(fetchResult, year) {
     this.targetYear = this._validateTargetYear(year);
     const data = fetchResult.update.harian;
-    const endOfYear = this._generateEndOfYearDateString(this.targetYear);
+    const endOfYear = this._generateEndOfYearDateString();
 
     for (let i = 0; i < data.length; i++) {
       if (data[i].key_as_string === endOfYear) {
         return data[i];
       }
     }
-
-    throw new Error();
   }
 
   _validateTargetYear(year) {
@@ -100,13 +101,18 @@ class CovidAPI {
     return year;
   }
 
-  _generateEndOfYearDateString(targetYear) {
-    if (!targetYear === this.currentYear) return JSON.stringify(new Date(`${targetYear}-12-31`)).replace(/"/g, '');
+  _generateYesterdayDate() {
+    const yesterday = new Date();
+    yesterday.setDate(this.currentDate - 1);
+    yesterday.setUTCHours(0, 0, 0, 0);
 
-    const month = this.currentTime.getMonth();
-    const date = this.currentTime.getDate();
+    return yesterday;
+  }
 
-    return JSON.stringify(new Date(`${targetYear}-${month}-${date - 1}`)).replace(/"/g, '');
+  _generateEndOfYearDateString() {
+    if (!(Number(this.targetYear) === this.currentYear)) return JSON.stringify(new Date(`${this.targetYear}-12-31`)).replace(/"/g, '');
+    
+    return JSON.stringify(this._generateYesterdayDate()).replace(/"/g, '');
   }
 }
 
