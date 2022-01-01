@@ -1,5 +1,9 @@
 const assert = require('assert').strict;
 const axios = require('axios').default;
+const dayjs = require('dayjs');
+const isToday = require('dayjs/plugin/isToday');
+
+dayjs.extend(isToday);
 
 class CovidAPI {
   constructor() {
