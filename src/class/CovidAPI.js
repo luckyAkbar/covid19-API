@@ -64,7 +64,6 @@ class CovidAPI {
         active: yearlyData.jumlah_dirawat_kum.value,
       };
     } catch (e) {
-      console.log(e);
       this.message = `Yearly Covid19 Case in Indonesia for year ${year} is not found`;
       this.ok = false;
       this.status = 404;
@@ -73,7 +72,7 @@ class CovidAPI {
     }
   }
 
-  async getRangedYearlyData({ since = 2020, upto = this.currentYear}) {
+  async getRangedYearlyData({ since = 2020, upto = this.currentYear }) {
     try {
       const response = await axios.get('https://data.covid19.go.id/public/api/update.json');
       assert.strictEqual(response.status, 200);
@@ -113,6 +112,8 @@ class CovidAPI {
         return data[i];
       }
     }
+
+    return [];
   }
 
   _generateYearInBetween(since, upto) {
@@ -153,7 +154,7 @@ class CovidAPI {
 
   _generateEndOfYearDateString() {
     if (!(Number(this.targetYear) === this.currentYear)) return JSON.stringify(new Date(`${this.targetYear}-12-31`)).replace(/"/g, '');
-    
+
     return JSON.stringify(this._generateYesterdayDate()).replace(/"/g, '');
   }
 }
