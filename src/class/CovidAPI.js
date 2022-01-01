@@ -56,7 +56,6 @@ class CovidAPI {
 
       return yearlyData;
     } catch (e) {
-      console.log(e)
       this.message = `Yearly Covid19 Case in Indonesia for year ${year} is not found`;
       this.ok = false;
       this.status = 404;
