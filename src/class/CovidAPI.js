@@ -54,15 +54,9 @@ class CovidAPI {
       const { data } = result;
       const yearlyData = this._extractYearlyData(data, year);
 
-      return {
-        year: this.targetYear,
-        timestamp: yearlyData.key_as_string.value,
-        positive: yearlyData.jumlah_positif_kum.value,
-        recovered: yearlyData.jumlah_sembuh_kum.value,
-        deaths: yearlyData.jumlah_meninggal_kum.value,
-        active: yearlyData.jumlah_dirawat_kum.value,
-      };
+      return yearlyData;
     } catch (e) {
+      console.log(e)
       this.message = `Yearly Covid19 Case in Indonesia for year ${year} is not found`;
       this.ok = false;
       this.status = 404;
@@ -109,7 +103,8 @@ class CovidAPI {
     for (let i = 0; i < data.length; i++) {
       if (data[i].key_as_string === endOfYear) {
         return {
-          year,
+          year: this.targetYear,
+          timestamp: data[i].key_as_string,
           positive: data[i].jumlah_positif_kum.value,
           recovered: data[i].jumlah_sembuh_kum.value,
           deaths: data[i].jumlah_meninggal_kum.value,
@@ -118,7 +113,7 @@ class CovidAPI {
       }
     }
 
-    return [];
+    return {};
   }
 
   _generateYearInBetween(since, upto) {
