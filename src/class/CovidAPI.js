@@ -163,7 +163,6 @@ class CovidAPI {
           recovered: dailyCovidData[i].jumlah_sembuh_kum.value,
           deaths: dailyCovidData[i].jumlah_meninggal_kum.value,
           active: dailyCovidData[i].jumlah_dirawat_kum.value,
-          ts: dailyCovidData[i].key_as_string,
         });
 
         continue;
