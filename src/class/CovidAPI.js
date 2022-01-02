@@ -85,7 +85,12 @@ class CovidAPI {
     }
   }
 
-  async getMonthlyData(since, upto) {
+  async getMonthlyData(querySince, queryUpto) {
+    const { since, upto } = this._validateMonthlySinceAndUpto({
+      actualSince: querySince,
+      actualUpto: queryUpto,
+    });
+
     try {
       const response = await axios.get('https://data.covid19.go.id/public/api/update.json');
       assert.strictEqual(response.status, 200);
