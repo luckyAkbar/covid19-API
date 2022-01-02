@@ -46,3 +46,12 @@
   - example request: **curl --location --request GET 'server_url:port/monthly?since=2020.8&upto=2020.9'**
   - example response: ![Image](https://i.ibb.co/zNnB3vk/image.png)
   - extra note: Value supplied in both query must represent year and month date. For example, a valid one will be: *?since=2020.08&upto=2020.12*. The format for both query is *year.month*. However, if you supply invalid query, wheter the since year value less than 2020, or the year upto more than this current year, the server will response you back with default query value, for since -> *2020.03*, for upto: *current_year.current_month*
+
+5. **Endpoint: '/monthly/:year'**
+  - method: **GET**
+  - params: *year*
+  - query: since, upto
+  - response type: **application/json**
+  - desc: Get monthly data from range given in query, but if there is something wrong in either your query or URL params, the year choosen will be the one supplied in URL params.
+  - example request: **curl --location --request GET 'server_url:port/monthly/2020?since=2020.4&upto=2020.5'**
+  - example response: ![Image](https://i.ibb.co/MVHS3Ms/image.png)
