@@ -245,6 +245,57 @@ class CovidAPI {
     return year;
   }
 
+  _extractYearAndMonthFromYearlyRangedMonthlyQuery(yearQuery, since, upto) {
+    const rangedMonthlyQuery = {
+      year: 2020,
+      since: {
+        year: 2020,
+        month: 1,
+      },
+      upto: {
+        year: 2020,
+        month: 12,
+      },
+    };
+
+    try {
+      const numYearQuery = Number(yearQuery);
+
+      if (Number.isNaN(numYearQuery) || numYearQuery < 2020 || numYearQuery > this.currentYear) {
+        rangedMonthlyQuery.year = 2020;
+        rangedMonthlyQuery.since.year = 2020;
+        rangedMonthlyQuery.upto.year = 2020;
+        this.message = 'We detect error value in your URL params. So we decided to send response in year 2020.';
+      } else {
+        rangedMonthlyQuery.year = numYearQuery;
+        rangedMonthlyQuery.since.year = numYearQuery;
+        rangedMonthlyQuery.upto.year = numYearQuery;
+      }
+
+      const yearSince = Number(since.split('.')[0]);
+      const monthSince = Number(since.split('.')[1]);
+      const yearUpto = Number(upto.split('.')[0]);
+      const monthUpto = Number(upto.split('.')[1]);
+
+      if (yearSince >= 2020 || yearSince <= this.currentYear) rangedMonthlyQuery.since.year = yearSince;
+      if (yearUpto >= 2020 || yearUpto <= this.currentYear) rangedMonthlyQuery.upto.year = yearUpto;
+      if (monthSince >= 1 || monthSince <= this.currentMonth) rangedMonthlyQuery.since.month = monthSince;
+      if (monthUpto >= 1 || monthUpto <= this.currentMonth) rangedMonthlyQuery.upto.month = monthUpto;
+
+      if ((rangedMonthlyQuery.year !== rangedMonthlyQuery.since.year) || (rangedMonthlyQuery.year !== rangedMonthlyQuery.upto.year)) {
+        rangedMonthlyQuery.since.year = rangedMonthlyQuery.year;
+        rangedMonthlyQuery.upto.year = rangedMonthlyQuery.year;
+        rangedMonthlyQuery.since.month = 1;
+        rangedMonthlyQuery.upto.month = 12;
+        this.message = 'We detect inconsistencies beteween year in your URL params and query, so we decided to give you result according to your validated URL params';
+      }
+    } catch (e) {
+      this.message = 'We detect absence wheter in your query or URL params. So we decide to give you default response. Please refer to our docs to see the correct usage.';
+    } finally {
+      return rangedMonthlyQuery;
+    }
+  }
+
   _validateMonthlySinceAndUpto({
     actualSince,
     actualUpto,
