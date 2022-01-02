@@ -12,7 +12,7 @@ class CovidAPI {
     this.defaultCovidYearDetected = 2020;
     this.currentTime = new Date();
     this.currentYear = this.currentTime.getFullYear();
-    this.currentMonth = this.currentTime.getMonth();
+    this.currentMonth = this.currentTime.getMonth() + 1;
     this.currentDate = this.currentTime.getDate();
     this.message = 'Request success!';
     this.targetYear = null;
