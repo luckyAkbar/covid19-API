@@ -3,6 +3,7 @@ const updateHandler = require('../handler/update');
 const yearlyHandlerHandler = require('../handler/yearly');
 const rangedYearly = require('../handler/rangedYearly');
 const monthlyHanlder = require('../handler/monthly');
+const yearRangedMonthlyHandler = require('../handler/yearRangedMonthly');
 
 const router = express.Router();
 
@@ -17,6 +18,9 @@ router.route('/yearly/:year')
 
 router.route('/monthly')
   .get(monthlyHanlder);
+
+router.route('/monthly/:year')
+  .get(yearRangedMonthlyHandler);
 
 router.route('*')
   .all((req, res) => {
