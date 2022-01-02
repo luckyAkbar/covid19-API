@@ -162,13 +162,9 @@ class CovidAPI {
     return {};
   }
 
-  _extractMonthlyData(fetchResult, querySince, queryUpto) {
+  _extractMonthlyData(fetchResult, since, upto) {
     const monthlyData = [];
     const { harian: dailyCovidData } = fetchResult.update;
-    const { since, upto } = this._validateMonthlySinceAndUpto({
-      actualSince: querySince,
-      actualUpto: queryUpto,
-    });
 
     for (let i = 0; i < dailyCovidData.length; i++) {
       const yearKey = Number(dailyCovidData[i].key_as_string.split('-')[0]);
