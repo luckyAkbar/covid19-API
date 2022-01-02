@@ -36,3 +36,13 @@
   - example request: **curl --location --request GET 'server_url:port/yearly/2020'**
   - example response: ![Image](https://i.ibb.co/JK12JxL/image.png)
   - extra note: since covid come to Indonesia on 2020, any request with *year* in params less than 2020 will be treated as if *year* was 2020. The same will happen if *year* was more than current year. In that case, result will be accumulative case up to that current year.
+
+4. **Endpoint: '/monthly'**
+  - method: **GET**
+  - params: *none*
+  - query: since, upto
+  - response type: **application/json**
+  - desc: Get monthly accumulative Covid19 case in Indonesia from value given in *since* and *upto* query
+  - example request: **curl --location --request GET 'server_url:port/monthly?since=2020.8&upto=2020.9'**
+  - example response: ![Image](https://i.ibb.co/zNnB3vk/image.png)
+  - extra note: Value supplied in both query must represent year and month date. For example, a valid one will be: *?since=2020.08&upto=2020.12*. The format for both query is *year.month*. However, if you supply invalid query, wheter the since year value less than 2020, or the year upto more than this current year, the server will response you back with default query value, for since -> *2020.03*, for upto: *current_year.current_month*
