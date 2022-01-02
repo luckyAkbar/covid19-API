@@ -137,6 +137,66 @@ class CovidAPI {
     return {};
   }
 
+  _extractMonthlyData(fetchResult, querySince, queryUpto) {
+    const monthlyData = [];
+    const { harian: dailyCovidData } = fetchResult.update;
+    const { since, upto } = this._validateMonthlySinceAndUpto({
+      actualSince: querySince,
+      actualUpto: queryUpto,
+    });
+
+    for (let i = 0; i < dailyCovidData.length; i++) {
+      const yearKey = Number(dailyCovidData[i].key_as_string.split('-')[0]);
+      const monthKey = Number(dailyCovidData[i].key_as_string.split('-')[1]);
+      const dateKey = Number(dailyCovidData[i].key_as_string.split('-')[2].split('T')[0]);
+      const lastDayInMonth = dayjs(`${yearKey}-${monthKey}`).daysInMonth();
+      const isThisDay = dayjs(`${yearKey}-${monthKey}-${this.currentDate}`).isToday();
+
+      if (!(dateKey === lastDayInMonth || (isThisDay && dateKey === this.currentDate))) continue;
+
+      if (yearKey === since.year && monthKey >= since.month) {
+        if (since.year === upto.year && monthKey > upto.month) continue;
+
+        monthlyData.push({
+          month: `${yearKey}-${monthKey}`,
+          positive: dailyCovidData[i].jumlah_positif_kum.value,
+          recovered: dailyCovidData[i].jumlah_sembuh_kum.value,
+          deaths: dailyCovidData[i].jumlah_meninggal_kum.value,
+          active: dailyCovidData[i].jumlah_dirawat_kum.value,
+          ts: dailyCovidData[i].key_as_string,
+        });
+
+        continue;
+      }
+
+      if (yearKey === upto.year && monthKey <= upto.month) {
+        if (since.year === upto.year && monthKey < since.month) continue;
+
+        monthlyData.push({
+          month: `${yearKey}-${monthKey}`,
+          positive: dailyCovidData[i].jumlah_positif_kum.value,
+          recovered: dailyCovidData[i].jumlah_sembuh_kum.value,
+          deaths: dailyCovidData[i].jumlah_meninggal_kum.value,
+          active: dailyCovidData[i].jumlah_dirawat_kum.value,
+        });
+
+        continue;
+      }
+
+      if (yearKey > since.year && yearKey < upto.year) {
+        monthlyData.push({
+          month: `${yearKey}-${monthKey}`,
+          positive: dailyCovidData[i].jumlah_positif_kum.value,
+          recovered: dailyCovidData[i].jumlah_sembuh_kum.value,
+          deaths: dailyCovidData[i].jumlah_meninggal_kum.value,
+          active: dailyCovidData[i].jumlah_dirawat_kum.value,
+        });
+      }
+    }
+
+    return monthlyData;
+  }
+
   _generateYearInBetween(since, upto) {
     const targetYearSince = Number(this._validateTargetYear(since));
     const targetYearUpto = Number(this._validateTargetYear(upto));
