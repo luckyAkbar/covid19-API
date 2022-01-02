@@ -225,6 +225,71 @@ class CovidAPI {
     return year;
   }
 
+  _validateMonthlySinceAndUpto({
+    actualSince,
+    actualUpto,
+    defaultSince = { year: 2020, month: 3 },
+    defaultUpto = { year: this.currentYear, month: this.currentMonth },
+  }) {
+    const validateMonthlySinceAndUpto = {
+      since: {
+        year: null,
+        month: null,
+      },
+      upto: {
+        year: null,
+        month: null,
+      },
+
+      validate(currentYear, currentMonth) {
+        if (this.since.year < 2020 || this.since.year > currentYear) {
+          this.since.year = 2020;
+          this.since.month = 3;
+        }
+
+        if (this.upto.year > currentYear || this.upto.year < 2000) {
+          this.upto.year = currentYear;
+          this.upto.month = currentMonth;
+        }
+
+        if (this.since.month < 1 || this.since.month > 12) this.since.month = 1;
+        if (this.upto.month < 1 || this.upto.month > 12) this.upto.month = 12;
+      },
+    };
+
+    try {
+      // assertion below will make since / actual
+      // params can be used years later.
+      // probably until the earth is no longer
+      // liveable anymore lol. also it prevent
+      // potential bug if user supply really long value
+      // in params (run out of memory)
+
+      assert.notStrictEqual(defaultSince, undefined);
+      assert.notStrictEqual(defaultUpto, undefined);
+      assert.strictEqual((actualSince.length < 10), true);
+      assert.strictEqual((actualUpto.length < 10), true);
+
+      const yearSince = Number(actualSince.split('.')[0]);
+      const monthSince = Number(actualSince.split('.')[1]);
+      const yearUpto = Number(actualUpto.split('.')[0]);
+      const monthUpto = Number(actualUpto.split('.')[1]);
+
+      validateMonthlySinceAndUpto.since.year = Number.isNaN(yearSince) ? defaultSince.year : yearSince;
+      validateMonthlySinceAndUpto.since.month = Number.isNaN(monthSince) ? defaultSince.month : monthSince;
+      validateMonthlySinceAndUpto.upto.year = Number.isNaN(yearUpto) ? defaultUpto.year : yearUpto;
+      validateMonthlySinceAndUpto.upto.month = Number.isNaN(monthUpto) ? defaultUpto.month : monthUpto;
+    } catch (e) {
+      validateMonthlySinceAndUpto.since = defaultSince;
+      validateMonthlySinceAndUpto.upto = defaultUpto;
+
+      this.message = 'This response is the server default response because we detect error / absence in your since and upto query.';
+    } finally {
+      validateMonthlySinceAndUpto.validate(this.currentYear, this.currentMonth);
+      return validateMonthlySinceAndUpto;
+    }
+  }
+
   _generateYesterdayDate() {
     const yesterday = new Date();
     yesterday.setDate(this.currentDate - 1);
