@@ -108,6 +108,26 @@ class CovidAPI {
     }
   }
 
+  async getYearRangedMonthlyData(yearParams, querySince, queryUpto) {
+    const { since, upto } = this._extractYearAndMonthFromYearlyRangedMonthlyQuery(yearParams, querySince, queryUpto);
+
+    try {
+      const response = await axios.get('https://data.covid19.go.id/public/api/update.json');
+      assert.strictEqual(response.status, 200);
+
+      const { data } = response;
+      const rangedYearMonthlyData = this._extractMonthlyData(data, since, upto);
+
+      return rangedYearMonthlyData;
+    } catch (e) {
+      this.ok = false;
+      this.message = 'We failed to response to your request due to 3rd party service returning error message.';
+      this.status = 503;
+
+      throw e;
+    }
+  }
+
   _extractRangedYearlyData(fetchResult, since, upto) {
     const yearInBetween = this._generateYearInBetween(since, upto);
     const extractedRangedYearlyData = [];
