@@ -128,6 +128,24 @@ class CovidAPI {
     }
   }
 
+  async getDailyData(since, upto) {
+    try {
+      const response = await axios.get('https://data.covid19.go.id/public/api/update.json');
+      assert.strictEqual(response.status, 200);
+
+      const { harian: covidData } = response.data.update;
+      const dailyData = this._extractDailyData(covidData, since, upto);
+
+      return dailyData;
+    } catch (e) {
+      this.ok = false;
+      this.message = 'We failed to get your data due to 3rd party service returning error';
+      this.status = 503;
+
+      throw e;
+    }
+  }
+
   _extractRangedYearlyData(fetchResult, since, upto) {
     const yearInBetween = this._generateYearInBetween(since, upto);
     const extractedRangedYearlyData = [];
@@ -358,6 +376,103 @@ class CovidAPI {
     } finally {
       validateMonthlySinceAndUpto.validate(this.currentYear, this.currentMonth);
       return validateMonthlySinceAndUpto;
+    }
+  }
+
+  _extractDailyData(fetchResult, since, upto) {
+    const dailyData = [];
+    const params = this._extractDailyParams(since, upto);
+    const validatedSince = this._validateDailyParams({
+      year: 2020,
+      month: 3,
+      date: 2,
+    }, params.since);
+    const validatedUpto = this._validateDailyParams({
+      year: this.currentYear,
+      month: this.currentMonth,
+      date: this.currentDate,
+    }, params.upto);
+
+    for (let i = 0; i < fetchResult.length; i++) {
+      const targetDate = new Date(fetchResult[i].key_as_string);
+
+      if (targetDate >= validatedSince.dateValue && targetDate <= validatedUpto.dateValue) {
+        dailyData.push({
+          date: `${targetDate.getFullYear()}-${targetDate.getMonth() + 1}-${targetDate.getDate()}`,
+          positive: fetchResult[i].jumlah_positif_kum.value,
+          recovered: fetchResult[i].jumlah_sembuh_kum.value,
+          deaths: fetchResult[i].jumlah_meninggal_kum.value,
+          active: fetchResult[i].jumlah_dirawat_kum.value,
+        });
+      }
+    }
+
+    return dailyData;
+  }
+
+  _validateDailyParams(defaultParams, { year, month, date }) {
+    const validatedParams = {
+      year: defaultParams.year,
+      month: defaultParams.month,
+      date: defaultParams.date,
+      dateValue: null,
+    };
+
+    if (year) validatedParams.year = year;
+    if (month) validatedParams.month = month;
+    if (date) validatedParams.date = date;
+
+    const testDate = new Date(`${year}-${month}-${date}`);
+
+    if (testDate.toString() === 'Invalid Date') {
+      validatedParams.year = defaultParams.year;
+      validatedParams.month = defaultParams.month;
+      validatedParams.date = defaultParams.date;
+    }
+
+    validatedParams.dateValue = new Date(`${year}-${month}-${date}`);
+    validatedParams.dateValue.setUTCHours(0, 0, 0, 0);
+
+    return validatedParams;
+  }
+
+  _extractDailyParams(since, upto) {
+    try {
+      const sinceParams = since.split('.');
+      const yearSince = sinceParams[0];
+      const monthSince = sinceParams[1];
+      const dateSince = sinceParams[2];
+
+      const uptoParams = upto.split('.');
+      const yearUpto = uptoParams[0];
+      const monthUpto = uptoParams[1];
+      const dateUpto = uptoParams[2];
+
+      return {
+        since: {
+          year: yearSince,
+          month: monthSince,
+          date: dateSince,
+        },
+        upto: {
+          year: yearUpto,
+          month: monthUpto,
+          date: dateUpto,
+        },
+      };
+    } catch (e) {
+      return {
+        since: {
+          year: 2020,
+          month: 3,
+          date: 2,
+        },
+        upto: {
+          year: this.currentYear,
+          month: this.currentMonth,
+          date: this.currentDate,
+        },
+      };
     }
   }
 
