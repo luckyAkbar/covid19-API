@@ -14,7 +14,7 @@ const dailyWithYearHandler = async (req, res) => {
       data: result,
     });
   } catch (e) {
-    this.status(covidAPI.status).json({
+    res.status(covidAPI.status).json({
       ok: covidAPI.ok,
       message: covidAPI.message,
     });
