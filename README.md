@@ -57,7 +57,14 @@
   - example response: ![Image](https://i.ibb.co/MVHS3Ms/image.png)
 
 6. **Endpoint: '/monthly/:year/:month'**
-
+  - method: **GET**
+  - params: *year*, *month*
+  - query: *none*
+  - response type: **application/json**
+  - desc: Get monthly data from date given from *year* and *month*
+  - example request: **curl --location --request GET 'server_url:port/monthly/2020/5'**
+  - example response: ![Image](https://i.ibb.co/5Y0MrQc/image.png)
+  - extra note: if value given in *year* and / or *month* is invalid, we will give the default value of *year* is 2020, and the *month* is 12.
 
 7. **Endpoint: '/daily'**
   - method: **GET**
