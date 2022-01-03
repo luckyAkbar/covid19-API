@@ -17,7 +17,7 @@ This guideline will focusly aim to Linux based operating systems. Any command / 
 3. Build the image
   - run: docker build -t covid-api .
 4. Run the image
-  - run: docker run -p 3000/3000 -d --name covid-api covid-api
+  - run: docker run -p 3000:3000 -d --name covid-api covid-api
 5. Access the API server
   - open web browser / postman
   - send request defined on API CONTRACTS below to: localhost:3000
