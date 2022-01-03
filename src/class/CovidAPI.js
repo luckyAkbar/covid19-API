@@ -596,14 +596,55 @@ class CovidAPI {
     try {
       if (Number(year) < 2020) return 2020;
       if (Number(year) > this.currentYear) return this.currentYear;
+
+      return Number(year);
     } catch (e) {
       this.message = 'Invalid value detected on year URL params';
-    } finally {
       return 2020;
     }
   }
 
-  _extractDailyParams(since, upto) {
+  _validateMonthParamsInDaily(month) {
+    try {
+      const numMonth = Number(month);
+      assert.notStrictEqual((numMonth < 1 || numMonth > 12), true);
+      assert.notStrictEqual(Number.isNaN(numMonth), true);
+
+      return numMonth;
+    } catch (e) {
+      this.message = 'You use wrong URL params in "month". So we decided to give you the result from this current month of the year supplied in "year" URL params (if it is valid)';
+
+      return this.currentMonth;
+    }
+  }
+
+  _validateDateParamsInDaily(date, maxDate) {
+    const numDate = Number(date);
+
+    try {
+      assert.notStrictEqual((numDate < 1 || numDate > maxDate), true);
+      assert.notStrictEqual(Number.isNaN(numDate), true);
+
+      return numDate;
+    } catch (e) {
+      this.message = 'We detect error on your "date" URL params. So, we decided to give result from the first day of the month';
+
+      return 1;
+    }
+  }
+
+  _extractDailyParams(since, upto, {
+    defaultSince = {
+      year: 2020,
+      month: 3,
+      date: 2,
+    },
+    defaultUpto = {
+      year: this.currentYear,
+      month: this.currentMonth,
+      date: this.currentDate,
+    },
+  }) {
     try {
       const sinceParams = since.split('.');
       const yearSince = sinceParams[0];
