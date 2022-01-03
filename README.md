@@ -5,6 +5,23 @@
 ### Technologies
 - This API was build with Javascript on NodeJS environment with ExpressJS framework
 
+### HOW TO BUILD, RUN, and USE
+This guideline will focusly aim to Linux based operating systems. Any command / step described below might be unsupported / need to be 'translated' to your respective operating system. You can search the equivalent step needed here for your operating system from google search.
+
+1. Install Docker
+  - visit: [docker-install](https://docs.docker.com/engine/install/ubuntu/)
+  - do every step written there, it's fairly straighforward and so easy to follow
+2. Clone this repo
+  - run: cd /your/prefered/dir/to/save/this/repo
+  - run: git clone https://github.com/luckyAkbar/covid19-API.git
+3. Build the image
+  - run: docker build -t covid-api .
+4. Run the image
+  - run: docker run -p 3000/3000 -d --name covid-api covid-api
+5. Access the API server
+  - open web browser / postman
+  - send request defined on API CONTRACTS below to: localhost:3000
+
 ### API CONTRACTS
 1. **Endpoint: '/'**
   - method: **GET**
