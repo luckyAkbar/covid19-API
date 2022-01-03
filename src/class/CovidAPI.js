@@ -505,7 +505,18 @@ class CovidAPI {
 
   _extractDailyData(fetchResult, since, upto) {
     const dailyData = [];
-    const params = this._extractDailyParams(since, upto);
+    const params = this._extractDailyParams(since, upto, {
+      defaultSince: {
+        year: 2020,
+        month: 3,
+        date: 2,
+      },
+      defaultUpto: {
+        year: this.currentYear,
+        month: this.currentMonth,
+        date: this.currentDate,
+      },
+    });
     const validatedSince = this._validateDailyParams({
       year: 2020,
       month: 3,
