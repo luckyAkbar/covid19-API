@@ -671,14 +671,14 @@ class CovidAPI {
     } catch (e) {
       return {
         since: {
-          year: 2020,
-          month: 3,
-          date: 2,
+          year: defaultSince.year,
+          month: defaultSince.month,
+          date: defaultSince.date,
         },
         upto: {
-          year: this.currentYear,
-          month: this.currentMonth,
-          date: this.currentDate,
+          year: defaultUpto.year,
+          month: defaultUpto.month,
+          date: defaultUpto.date,
         },
       };
     }
