@@ -17,6 +17,7 @@
         "no-plusplus": "off",
         "no-continue": "off",
         "no-unsafe-finally": "off",
-        "max-len": "off"
+        "max-len": "off",
+        "class-methods-use-this": "warn"
     }
 }
