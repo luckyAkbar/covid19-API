@@ -55,3 +55,45 @@
   - desc: Get monthly data from range given in query, but if there is something wrong in either your query or URL params, the year choosen will be the one supplied in URL params.
   - example request: **curl --location --request GET 'server_url:port/monthly/2020?since=2020.4&upto=2020.5'**
   - example response: ![Image](https://i.ibb.co/MVHS3Ms/image.png)
+
+6. **Endpoint: '/monthly/:year/:month'**
+
+
+7. **Endpoint: '/daily'**
+  - method: **GET**
+  - params: *none*
+  - query: since, upto,
+  - response type: **application/json**
+  - desc: Get daily data about covid case in Indonesia from date value given from *since*, and *upto* query.
+  - example request: **curl --location --request GET 'server_url:port/daily'**
+  - example response: ![Image](https://i.ibb.co/rMNwY3X/image.png)
+  - extra note: If no value or invalid value supplied on *since* and *upto*, the server will return daily covid case from first detected up until the last data.
+
+8. **Endpoint: '/daily/:year'**
+  - method: **GET**
+  - params: year
+  - query: since, upto,
+  - response type: **application/json**
+  - desc: Get daily data about covid case in Indonesia from *year* value and the value given from *since*, and *upto* query.
+  - example request: **curl --location --request GET 'server_url:port/daily/2020'**
+  - example response: ![Image](https://i.ibb.co/1Gdxtqq/image.png)
+  - extra note: If no value or invalid value supplied on *year*, *since* and *upto*, the server will return daily covid case from first day of the *year* until the last day of the *year* data.
+
+9. **Endpoint: '/daily/:year/:month'**
+  - method: **GET**
+  - params: year, month
+  - query: since, upto,
+  - response type: **application/json**
+  - desc: Get daily data about covid case in Indonesia from *year* and *month* value and the value given from *since*, and *upto* query.
+  - example request: **curl --location --request GET 'server_url:port/daily/2020/5'**
+  - example response: ![Image](https://i.ibb.co/CB4HJWX/image.png)
+  - extra note: If no value or invalid value supplied on *year*, *since* and *upto*, the server will return daily covid case from first day of the *year* and *month* until the last day of the *year* and *month* data.
+
+10. **Endpoint: '/daily/:year/:month/:date'**
+  - method: **GET**
+  - params: year, month, date
+  - query: *none*
+  - response type: **application/json**
+  - desc: Get daily data about covid case in Indonesia from the exact date supplied on *year*, *month*, *date*
+  - example request: **curl --location --request GET 'server_url:port/daily/2020/5/7'**
+  - example response: ![Image](https://i.ibb.co/Qrd8y9H/image.png)
