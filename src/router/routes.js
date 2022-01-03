@@ -6,6 +6,8 @@ const monthlyHanlder = require('../handler/monthly');
 const yearRangedMonthlyHandler = require('../handler/yearRangedMonthly');
 const dailyHandler = require('../handler/daily');
 const dailyWithYearHandler = require('../handler/dailyWithYear');
+const dailyWithYearAndMonth = require('../handler/dailyWithYearAndMonth');
+const dailyWithYearMonthAndDate = require('../handler/dailyWithYearMonthAndDate');
 
 const router = express.Router();
 
@@ -29,6 +31,12 @@ router.route('/daily')
 
 router.route('/daily/:year')
   .get(dailyWithYearHandler);
+
+router.route('/daily/:year/:month')
+  .get(dailyWithYearAndMonth);
+
+router.route('/daily/:year/:month/:date')
+  .get(dailyWithYearMonthAndDate);
 
 router.route('*')
   .all((req, res) => {
