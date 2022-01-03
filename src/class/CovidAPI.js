@@ -148,7 +148,18 @@ class CovidAPI {
 
   async getDailyWithYearData(yearParams, since, upto) {
     const year = this._validateYearParamsInDaily(yearParams);
-    const params = this._extractDailyParams(since, upto);
+    const params = this._extractDailyParams(since, upto, {
+      defaultSince: {
+        year,
+        month: 1,
+        date: 1,
+      },
+      defaultUpto: {
+        year,
+        month: 12,
+        date: 31,
+      },
+    });
     const validatedSince = this._validateDailyParams({
       year,
       month: 1,
