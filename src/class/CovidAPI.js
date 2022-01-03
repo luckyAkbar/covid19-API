@@ -238,8 +238,6 @@ class CovidAPI {
     const exactDate = new Date(`${year}-${month}-${date}`);
     exactDate.setUTCHours(0, 0, 0, 0);
 
-    console.log(exactDate.toString());
-
     try {
       const response = await axios.get('https://data.covid19.go.id/public/api/update.json');
       assert.strictEqual(response.status, 200);
@@ -247,7 +245,6 @@ class CovidAPI {
 
       for (let i = 0; i < covidData.length; i++) {
         const targetDate = new Date(covidData[i].key_as_string);
-        console.log(targetDate.toString())
 
         if (targetDate.toString() === exactDate.toString()) {
           return {
@@ -256,7 +253,7 @@ class CovidAPI {
             recovered: covidData[i].jumlah_sembuh_kum.value,
             deaths: covidData[i].jumlah_meninggal_kum.value,
             active: covidData[i].jumlah_dirawat_kum.value,
-          }
+          };
         }
       }
 
