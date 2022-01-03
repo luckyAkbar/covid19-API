@@ -146,6 +146,37 @@ class CovidAPI {
     }
   }
 
+  async getDailyWithYearData(yearParams, since, upto) {
+    const year = this._validateYearParamsInDaily(yearParams);
+    const params = this._extractDailyParams(since, upto);
+    const validatedSince = this._validateDailyParams({
+      year,
+      month: 1,
+      date: 1,
+    }, params.since);
+    const validatedUpto = this._validateDailyParams({
+      year,
+      month: 12,
+      date: 31,
+    }, params.upto);
+
+    try {
+      const response = await axios.get('https://data.covid19.go.id/public/api/update.json');
+      assert.strictEqual(response.status, 200);
+      const { harian: covidData } = response.data.update;
+
+      const result = this._extractDailyDataFromAPI(covidData, validatedSince, validatedUpto);
+
+      return result;
+    } catch (e) {
+      this.ok = false;
+      this.status = 503;
+      this.message = 'Your request failed because 3rd party API returning error message.';
+
+      throw e;
+    }
+  }
+
   _extractRangedYearlyData(fetchResult, since, upto) {
     const yearInBetween = this._generateYearInBetween(since, upto);
     const extractedRangedYearlyData = [];
@@ -434,6 +465,37 @@ class CovidAPI {
     validatedParams.dateValue.setUTCHours(0, 0, 0, 0);
 
     return validatedParams;
+  }
+
+  _extractDailyDataFromAPI(fetchResult, validatedSince, validatedUpto) {
+    const dailyData = [];
+
+    for (let i = 0; i < fetchResult.length; i++) {
+      const targetDate = new Date(fetchResult[i].key_as_string);
+
+      if (targetDate >= validatedSince.dateValue && targetDate <= validatedUpto.dateValue) {
+        dailyData.push({
+          date: `${targetDate.getFullYear()}-${targetDate.getMonth() + 1}-${targetDate.getDate()}`,
+          positive: fetchResult[i].jumlah_positif_kum.value,
+          recovered: fetchResult[i].jumlah_sembuh_kum.value,
+          deaths: fetchResult[i].jumlah_meninggal_kum.value,
+          active: fetchResult[i].jumlah_dirawat_kum.value,
+        });
+      }
+    }
+
+    return dailyData;
+  }
+
+  _validateYearParamsInDaily(year) {
+    try {
+      if (Number(year) < 2020) return 2020;
+      if (Number(year) > this.currentYear) return this.currentYear;
+    } catch (e) {
+      this.message = 'Invalid value detected on year URL params';
+    } finally {
+      return 2020;
+    }
   }
 
   _extractDailyParams(since, upto) {
