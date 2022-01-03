@@ -188,6 +188,88 @@ class CovidAPI {
     }
   }
 
+  async getDailyWithYearAndMonthData(yearParam, monthParam, since, upto) {
+    const year = this._validateYearParamsInDaily(yearParam);
+    const month = this._validateMonthParamsInDaily(monthParam);
+    const params = this._extractDailyParams(since, upto, {
+      defaultSince: {
+        year,
+        month,
+        date: 1,
+      },
+      defaultUpto: {
+        year,
+        month,
+        date: dayjs(`${year}-${month}`).daysInMonth(),
+      },
+    });
+    const validatedSince = this._validateDailyParams({
+      year,
+      month,
+      date: 1,
+    }, params.since);
+    const validatedUpto = this._validateDailyParams({
+      year,
+      month,
+      date: dayjs(`${year}-${month}`).daysInMonth(),
+    }, params.upto);
+
+    try {
+      const response = await axios.get('https://data.covid19.go.id/public/api/update.json');
+      assert.strictEqual(response.status, 200);
+      const { harian: covidData } = response.data.update;
+
+      const result = this._extractDailyDataFromAPI(covidData, validatedSince, validatedUpto);
+
+      return result;
+    } catch (e) {
+      this.ok = false;
+      this.status = 503;
+      this.message = 'Your request failed because 3rd party API returning error message.';
+
+      throw e;
+    }
+  }
+
+  async getDailyWithYearMonthAndDate(yearParam, monthParam, dateParam) {
+    const year = this._validateYearParamsInDaily(yearParam);
+    const month = this._validateMonthParamsInDaily(monthParam);
+    const date = this._validateDateParamsInDaily(dateParam, dayjs(`${year}-${month}`).daysInMonth());
+    const exactDate = new Date(`${year}-${month}-${date}`);
+    exactDate.setUTCHours(0, 0, 0, 0);
+
+    console.log(exactDate.toString());
+
+    try {
+      const response = await axios.get('https://data.covid19.go.id/public/api/update.json');
+      assert.strictEqual(response.status, 200);
+      const { harian: covidData } = response.data.update;
+
+      for (let i = 0; i < covidData.length; i++) {
+        const targetDate = new Date(covidData[i].key_as_string);
+        console.log(targetDate.toString())
+
+        if (targetDate.toString() === exactDate.toString()) {
+          return {
+            date: `${year}-${month}-${date}`,
+            positive: covidData[i].jumlah_positif_kum.value,
+            recovered: covidData[i].jumlah_sembuh_kum.value,
+            deaths: covidData[i].jumlah_meninggal_kum.value,
+            active: covidData[i].jumlah_dirawat_kum.value,
+          }
+        }
+      }
+
+      throw new Error();
+    } catch (e) {
+      this.ok = false;
+      this.message = 'We failed to get the Covid data from the given params.';
+      this.status = 404;
+
+      throw e;
+    }
+  }
+
   _extractRangedYearlyData(fetchResult, since, upto) {
     const yearInBetween = this._generateYearInBetween(since, upto);
     const extractedRangedYearlyData = [];
