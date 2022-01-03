@@ -128,6 +128,26 @@ class CovidAPI {
     }
   }
 
+  async getYearAndMonthRangedMonthlyData(yearParams, monthParams, querySince, queryUpto) {
+    const { year, month } = this._validateYearAndMonthInMonthlyParams(yearParams, monthParams);
+
+    try {
+      const response = await axios.get('https://data.covid19.go.id/public/api/update.json');
+      assert.strictEqual(response.status, 200);
+
+      const { harian: covidData } = response.data.update;
+      const result = this._extractYearAndMonthRangedMonthlyData(covidData, year, month);
+      
+      return result;
+    } catch(e) {
+      this.ok = false;
+      this.message = 'We failed to response to your request due to 3rd party service returning error message.';
+      this.status = 503;
+
+      throw e;
+    }
+  }
+
   async getDailyData(since, upto) {
     try {
       const response = await axios.get('https://data.covid19.go.id/public/api/update.json');
@@ -627,6 +647,60 @@ class CovidAPI {
 
       return 1;
     }
+  }
+
+  _validateYearAndMonthInMonthlyParams(year, month) {
+    const validated = {
+      year: null,
+      month: null,
+    };
+    const numYear = Number(year);
+    const numMonth = Number(month);
+
+    try {
+      validated.year = numYear;
+      validated.month = numMonth;
+
+      if (Number.isNaN(numYear) || numYear < 2020 || numYear > this.currentYear) {
+        this.message = 'Invalid value detected on year params. We decide to give you default value from year 2020';
+
+        validated.year = 2020;
+      }
+
+      if (Number.isNaN(numMonth) || numMonth < 1 || numMonth > 12) {
+        this.message = 'Invalid value detected on year params. We decide to give you default value from the last month of the year';
+
+        validated.month = 12;
+      }
+
+      return validated;
+    } catch (e) {
+      this.message = 'Unexpected error happen on your URL params. We decide to give default response';
+
+      validated.year = 2020;
+      validated.month = 12;
+
+      return validated;
+    }
+  }
+
+  _extractYearAndMonthRangedMonthlyData(covidData, year, month) {
+    const result = [];
+    const targetMonth = month < 10 ? `0${month}` : month;
+
+    for (let i = 0; i < covidData.length; i++) {
+      if (covidData[i].key_as_string.startsWith(`${year}-${targetMonth}`)) {
+        result.push({
+          month: `${year}-${month}`,
+          positive: covidData[i].jumlah_positif_kum.value,
+          recovered: covidData[i].jumlah_sembuh_kum.value,
+          deaths: covidData[i].jumlah_meninggal_kum.value,
+          active: covidData[i].jumlah_dirawat_kum.value,
+        });
+      }
+    }
+
+    return result;
   }
 
   _extractDailyParams(since, upto, {
