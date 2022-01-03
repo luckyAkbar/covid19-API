@@ -576,7 +576,6 @@ class CovidAPI {
 
       if (targetDate > validatedSince.dateValue && targetDate <= validatedUpto.dateValue) {
         dailyData.push({
-          ts: fetchResult[i].key_as_string,
           date: `${targetDate.getFullYear()}-${targetDate.getMonth() + 1}-${targetDate.getDate()}`,
           positive: fetchResult[i].jumlah_positif_kum.value,
           recovered: fetchResult[i].jumlah_sembuh_kum.value,
