@@ -4,7 +4,7 @@
 
 ### Technologies
 - This API was build with Javascript on NodeJS environment with ExpressJS framework
-- If you want to access the deployed version of this app, i already deployed this and you can access it direcly on this IP: **http://3.21.232.9/**
+- If you want to access the deployed version of this app, i already deployed this and you can access it direcly on this IP: **http://3.21.232.9:5000/**
 
 ### HOW TO BUILD, RUN, and USE
 This guideline will focusly aim to Linux based operating systems. Any command / step described below might be unsupported / need to be 'translated' to your respective operating system. You can search the equivalent step needed here for your operating system from google search.
